@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.bridges
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
@@ -122,12 +123,20 @@ fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): Calla
  * returns the first immediate super function of the given fake override which overrides that implementation.
  * The returned function should be called from TImpl-bridges generated for the given fake override.
  */
-fun firstSuperMethodFromKotlin(
-        descriptor: CallableMemberDescriptor,
-        implementation: CallableMemberDescriptor
+tailrec fun firstSuperMethodFromKotlin(
+    descriptor: CallableMemberDescriptor,
+    implementation: CallableMemberDescriptor
 ): CallableMemberDescriptor? {
-    return descriptor.overriddenDescriptors.firstOrNull { overridden ->
+    val result = descriptor.overriddenDescriptors.firstOrNull { overridden ->
         overridden.modality != Modality.ABSTRACT &&
-        (overridden == implementation || OverridingUtil.overrides(overridden, implementation))
+                (overridden == implementation || OverridingUtil.overrides(overridden, implementation))
     }
+
+    // A fake override in an abstract Java class should not be a reason to avoid generating a delegation to DefaultImpls
+    // See the testData from implementingInterfaceThroughJava.kt
+    if (result?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && result.containingDeclaration is JavaClassDescriptor) {
+        return firstSuperMethodFromKotlin(result, implementation)
+    }
+
+    return result
 }

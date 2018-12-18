@@ -14131,6 +14131,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/longChainOfKotlinExtendsFromJavaWithDefault.kt");
             }
 
+            @TestMetadata("overrideOfDefaultImpls.kt")
+            public void testOverrideOfDefaultImpls() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/overrideOfDefaultImpls.kt");
+            }
+
             @TestMetadata("samOnInterfaceWithDefaultMethod.kt")
             public void testSamOnInterfaceWithDefaultMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/samOnInterfaceWithDefaultMethod.kt");
@@ -23585,6 +23590,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("genericMethod.kt")
         public void testGenericMethod() throws Exception {
             runTest("compiler/testData/codegen/box/traits/genericMethod.kt");
+        }
+
+        @TestMetadata("implementingInterfaceThroughJava.kt")
+        public void testImplementingInterfaceThroughJava() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/implementingInterfaceThroughJava.kt");
+        }
+
+        @TestMetadata("implementingInterfaceThroughJavaWithOverride.kt")
+        public void testImplementingInterfaceThroughJavaWithOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/implementingInterfaceThroughJavaWithOverride.kt");
         }
 
         @TestMetadata("indirectlyInheritPropertyGetter.kt")
